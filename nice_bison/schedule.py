@@ -68,3 +68,14 @@ class RandomActivationByBreed(RandomActivation):
         Returns the current number of agents of certain breed in the queue.
         '''
         return len(self.agents_by_breed[breed_class].values())
+    
+    def get_average_altruism(self, breed_class):
+        '''
+        Returns the current altruism average
+        '''
+        agents = self.agents_by_breed[breed_class].values()
+        if len(agents) > 0:
+            altruism_levels = [agent.altruism for agent in agents]
+            return sum(altruism_levels)/len(altruism_levels)
+        else:
+            return 0

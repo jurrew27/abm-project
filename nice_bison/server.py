@@ -37,6 +37,7 @@ def bison_portrayal(agent):
 
 canvas_element = CanvasGrid(bison_portrayal, 10, 10, 500, 500)
 chart_element = ChartModule([{"Label": "Bison", "Color": "#666666"}])
+chart_element = ChartModule([{"Label": "Altruism", "Color": "#666666"}])
 
 model_params = {"number_grass_growth": UserSettableParameter('slider', 'Number grass patches growth', 5, 1, 20),
                 "amount_grass_growth": UserSettableParameter('slider', 'Amount grass per patch', 4, 1, 20),
