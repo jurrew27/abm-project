@@ -14,7 +14,7 @@ class NiceBison(Model):
     initial_bison_food = 4
     bison_reproduce_threshold = 10
 
-    number_grass_growth = 20
+    number_grass_growth = 5
     amount_grass_growth = 4
 
     mutation_prob = 0.5
@@ -29,7 +29,7 @@ class NiceBison(Model):
 
     def __init__(self, height=10, width=10, initial_bison=10,
                  initial_bison_food=4, bison_reproduce_threshold=10,
-                 amount_grass_growth=20, number_grass_growth=4,
+                 amount_grass_growth=4, number_grass_growth=5,
                  initial_bison_altruism=0.5, mutation_prob=0.5, mutation_std=0.1,
                  verbose=False):
         '''
