@@ -42,9 +42,6 @@ class Bison(RandomWalker):
                          self.moore, self.energy/2, altruism_offspring)
             self.model.grid.place_agent(child, self.pos)
             self.model.schedule.add(child)
-        
-    def update_opinion_opponent(self, strategy_self, strategy_other):
-        None
 
 
 class GrassPatch(Agent):

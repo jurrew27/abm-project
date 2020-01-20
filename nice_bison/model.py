@@ -89,8 +89,6 @@ class NiceBison(Model):
         bison_one_strategy = bison_one.choose_strategy(bison_two.unique_id)
         bison_two_strategy = bison_two.choose_strategy(bison_one.unique_id)
         gain_one, gain_two = self.payoff_matrix[bison_one_strategy][bison_two_strategy]
-        bison_one.update_opinion_opponent(bison_one_strategy, bison_two_strategy)
-        bison_two.update_opinion_opponent(bison_two_strategy, bison_one_strategy)
         print(f'gains battle: {gain_one}, {gain_two}')
         bison_one.energy += gain_one * grass_amount
         bison_two.energy += gain_two * grass_amount
