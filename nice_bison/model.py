@@ -30,7 +30,8 @@ class NiceBison(Model):
     def __init__(self, height=10, width=10, initial_bison=10,
                  initial_bison_food=4, bison_reproduce_threshold=10,
                  amount_grass_growth=20, number_grass_growth=4,
-                 initial_bison_altruism=0.5, mutation_prob=0.5, mutation_std=0.1):
+                 initial_bison_altruism=0.5, mutation_prob=0.5, mutation_std=0.1,
+                 verbose=False):
         '''
         TODO: update this to bison
         Create a new Wolf-Sheep model with the given parameters.
@@ -57,6 +58,7 @@ class NiceBison(Model):
         self.mutation_prob = mutation_prob
         self.mutation_std = mutation_std
         self.altruism_bound = [0.05, 0.95]
+        self.verbose = verbose
         
         self.schedule = RandomActivationByBreed(self)
         self.grid = MultiGrid(self.height, self.width, torus=True)
@@ -81,22 +83,24 @@ class NiceBison(Model):
         self.datacollector.collect(self)
 
     def step(self):
-        print('-----')
+        if self.verbose:
+            print(f'------------- time {self.schedule.time}')
+
         self.schedule.step(by_breed=True)
         self.datacollector.collect(self)
         self.grow_grass()
-        if self.verbose:
-            print([self.schedule.time, self.schedule.get_breed_count(Bison)])
 
     def bison_battle(self, grass_amount, bison_one, bison_two):
-        print(f'battle between bison {bison_one.unique_id} and {bison_two.unique_id}')
-        print(f'altruism factors: {bison_one.altruism}, {bison_two.altruism}')
-        bison_one_strategy = bison_one.choose_strategy(bison_two.unique_id)
-        bison_two_strategy = bison_two.choose_strategy(bison_one.unique_id)
+        bison_one_strategy = bison_one.choose_strategy()
+        bison_two_strategy = bison_two.choose_strategy()
         gain_one, gain_two = self.payoff_matrix[bison_one_strategy][bison_two_strategy]
-        print(f'gains battle: {gain_one}, {gain_two}')
         bison_one.energy += gain_one * grass_amount
         bison_two.energy += gain_two * grass_amount
+
+        if self.verbose:
+            print(f'battle between bison {bison_one.unique_id} and {bison_two.unique_id}')
+            print(f'altruism factors: {bison_one.altruism}, {bison_two.altruism}')
+            print(f'gains battle: {gain_one}, {gain_two}')
 
     def grow_grass(self):
         for i in range(self.number_grass_growth):

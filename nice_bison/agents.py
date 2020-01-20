@@ -11,11 +11,12 @@ class Bison(RandomWalker):
         self.opinion_opponents = {}
         self.altruism = altruism
 
-    def choose_strategy(self, opponent_id):
+    def choose_strategy(self):
         return 1 if self.random.random() > self.altruism else 0
 
     def step(self):
-        print(f'bison {self.unique_id}: {self.energy} energy')
+        if self.model.verbose:
+            print(f'bison {self.unique_id}: {self.energy} energy')
         self.random_move()
 
         self.energy -= 1
@@ -29,6 +30,10 @@ class Bison(RandomWalker):
         if self.energy < 0:
             self.model.grid._remove_agent(self.pos, self)
             self.model.schedule.remove(self)
+
+            if self.model.verbose:
+                print(f'bison {self.unique_id}: dies')
+
             return
 
         if self.energy > self.model.bison_reproduce_threshold:
@@ -43,6 +48,9 @@ class Bison(RandomWalker):
             self.model.grid.place_agent(child, self.pos)
             self.model.schedule.add(child)
 
+            if self.model.verbose:
+                print(f'bison {self.unique_id}: has child {child.unique_id} with energy {child.energy}')
+
 
 class GrassPatch(Agent):
     def __init__(self, unique_id, pos, model, amount):
@@ -52,19 +60,20 @@ class GrassPatch(Agent):
         self.claimants = []
 
     def step(self):
-        print(f'grass {self.unique_id}: {len(self.claimants)} claimants')
         if len(self.claimants) == 0:
             return
         elif len(self.claimants) == 1:
             self.claimants[0].energy += self.amount
             self.model.grid._remove_agent(self.pos, self)
             self.model.schedule.remove(self)
+
+            if self.model.verbose:
+                print(f'grass {self.unique_id} eaten by bison {self.claimants[0].unique_id}')
         else:
             lucky_claimant_one, lucky_claimant_two = self.random.sample(self.claimants, 2)
             self.model.bison_battle(self.amount, lucky_claimant_one, lucky_claimant_two)
             self.model.grid._remove_agent(self.pos, self)
             self.model.schedule.remove(self)
-
 
 
 
