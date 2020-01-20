@@ -2,6 +2,7 @@ from mesa import Agent
 from nice_bison.walker import RandomWalker
 from numpy import random
 
+
 class Bison(RandomWalker):
     energy = None
 
@@ -35,7 +36,7 @@ class Bison(RandomWalker):
             self.energy /= 2
             altruism_offspring = self.altruism #Offspring copies behaviour of parents (gentically)
             if self.random.random() < self.model.mutation_prob: #With a certain probability there is a mutation
-                after_mutation = altruism_offspring + random.normal(0, self.model.mutation_SD) #The size of mutation can be varied
+                after_mutation = altruism_offspring + random.normal(0, self.model.mutation_std) #The size of mutation can be varied
                 if after_mutation > self.model.altruism_bound[0] and after_mutation < self.model.altruism_bound[1]: #The altruism prob is bounded
                     altruism_offspring = after_mutation     
             child = Bison(self.model.next_id(), self.pos, self.model,

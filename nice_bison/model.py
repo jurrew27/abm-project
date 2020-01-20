@@ -17,6 +17,9 @@ class NiceBison(Model):
     number_grass_growth = 20
     amount_grass_growth = 4
 
+    mutation_prob = 0.5
+    mutation_std = 0.1
+
     payoff_matrix = [[[0, 0], [1, 0]],
                      [[0, 1], [0.5, 0.5]]]
 
@@ -26,8 +29,8 @@ class NiceBison(Model):
 
     def __init__(self, height=10, width=10, initial_bison=10,
                  initial_bison_food=4, bison_reproduce_threshold=10,
-                 amount_grass_growth=20, number_grass_growth=4, 
-                 initial_bison_altruism=0.5, mutation_prob=0.5, mutation_SD=0.1):
+                 amount_grass_growth=20, number_grass_growth=4,
+                 initial_bison_altruism=0.5, mutation_prob=0.5, mutation_std=0.1):
         '''
         TODO: update this to bison
         Create a new Wolf-Sheep model with the given parameters.
@@ -52,14 +55,16 @@ class NiceBison(Model):
         self.amount_grass_growth = amount_grass_growth
         self.initial_bison_altruism = initial_bison_altruism 
         self.mutation_prob = mutation_prob
-        self.mutation_SD = mutation_SD
+        self.mutation_std = mutation_std
         self.altruism_bound = [0.05, 0.95]
         
         self.schedule = RandomActivationByBreed(self)
         self.grid = MultiGrid(self.height, self.width, torus=True)
         self.datacollector = DataCollector(
             {"Bison": lambda m: m.schedule.get_breed_count(Bison),
-             "Altruism": lambda m: m.schedule.get_average_altruism(Bison)})
+             "Grass": lambda m: m.schedule.get_breed_count(GrassPatch),
+             "Altruism (avg)": lambda m: m.schedule.get_average_attribute(Bison, 'altruism'),
+             "Altruism (std)": lambda m: m.schedule.get_std_attribute(Bison, 'altruism')})
 
         for i in range(self.initial_bison):
             x = self.random.randrange(self.width)

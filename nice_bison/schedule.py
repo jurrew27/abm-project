@@ -1,4 +1,5 @@
 from collections import defaultdict
+from statistics import pstdev, mean
 
 from mesa.time import RandomActivation
 
@@ -69,13 +70,24 @@ class RandomActivationByBreed(RandomActivation):
         '''
         return len(self.agents_by_breed[breed_class].values())
     
-    def get_average_altruism(self, breed_class):
+    def get_average_attribute(self, breed_class, attribute):
         '''
-        Returns the current altruism average
+        Returns the current average of a property of an agent class
         '''
         agents = self.agents_by_breed[breed_class].values()
         if len(agents) > 0:
-            altruism_levels = [agent.altruism for agent in agents]
-            return sum(altruism_levels)/len(altruism_levels)
+            attribute_values = [getattr(agent, attribute) for agent in agents]
+            return mean(attribute_values)
+        else:
+            return 0
+
+    def get_std_attribute(self, breed_class, attribute):
+        '''
+        Returns the current standard deviation of a property of an agent class
+        '''
+        agents = self.agents_by_breed[breed_class].values()
+        if len(agents) > 0:
+            attribute_values = [getattr(agent, attribute) for agent in agents]
+            return pstdev(attribute_values)
         else:
             return 0
