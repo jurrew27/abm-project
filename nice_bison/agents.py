@@ -12,7 +12,7 @@ class Bison(RandomWalker):
         self.altruism = altruism
 
     def choose_strategy(self):
-        return 1 if self.random.random() > self.altruism else 0
+        return 0 if self.random.random() > self.altruism else 1
 
     def step(self):
         if self.model.verbose:
