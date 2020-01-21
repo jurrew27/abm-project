@@ -31,7 +31,7 @@ class NiceBison(Model):
                  initial_bison_food=4, bison_reproduce_threshold=10,
                  amount_grass_growth=4, number_grass_growth=5,
                  initial_bison_altruism=0.5, mutation_prob=0.5, mutation_std=0.1,
-                 verbose=False):
+                 one_grass_per_step=False, verbose=False):
         '''
         TODO: update this to bison
         Create a new Wolf-Sheep model with the given parameters.
@@ -58,6 +58,7 @@ class NiceBison(Model):
         self.mutation_prob = mutation_prob
         self.mutation_std = mutation_std
         self.altruism_bound = [0.05, 0.95]
+        self.one_grass_per_step = one_grass_per_step
         self.verbose = verbose
         
         self.schedule = RandomActivationByBreed(self)

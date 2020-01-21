@@ -22,10 +22,15 @@ class Bison(RandomWalker):
         self.energy -= 1
 
         neighborhood = self.model.grid.get_neighbors(self.pos, 1, True)
+        patches = [obj for obj in neighborhood if isinstance(obj, GrassPatch)]
 
-        for obj in neighborhood:
-            if isinstance(obj, GrassPatch):
-                obj.claimants.append(self)
+        if self.model.one_grass_per_step:
+            if len(patches) > 0:
+                patch = self.random.choice(patches)
+                patch.claimants.append(self)
+        else:
+            for patch in patches:
+                patch.claimants.append(self)
 
         if self.energy < 0:
             self.model.grid._remove_agent(self.pos, self)

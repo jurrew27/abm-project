@@ -41,13 +41,14 @@ chart_element_altruism = ChartModule([{"Label": "Altruism (avg)", "Color": "#000
 chart_element_agents = ChartModule([{"Label": "Grass", "Color": "#008800"},
                                     {"Label": "Bison", "Color": "#704c22"}])
 
-model_params = {"number_grass_growth": UserSettableParameter('slider', 'Number grass patches growth', 5, 1, 20),
+model_params = {"number_grass_growth": UserSettableParameter('slider', 'Number grass patches growth', 5, 1, 50),
                 "amount_grass_growth": UserSettableParameter('slider', 'Amount grass per patch', 4, 1, 20),
                 "initial_bison": UserSettableParameter('slider', 'Initial bison population', 10, 1, 100),
                 "initial_bison_food": UserSettableParameter('slider', 'Initial bison food', 4, 1, 10),
                 "bison_reproduce_threshold": UserSettableParameter('slider', 'Bison reproduction energy threshold', 10, 1, 20),
                 "mutation_prob": UserSettableParameter('slider', 'Bison mutation probability', 0.5, 0.0, 1.0, step=0.05),
-                "mutation_std": UserSettableParameter('slider', 'Bison mutation standard deviation', 0.1, 0.0, 1.0, step=0.05)}
+                "mutation_std": UserSettableParameter('slider', 'Bison mutation standard deviation', 0.1, 0.0, 1.0, step=0.05),
+                "one_grass_per_step": UserSettableParameter('checkbox', 'Bison can eat only one grass per step', value=False)}
 
 server = ModularServer(NiceBison, [canvas_element, chart_element_agents, chart_element_altruism], "Bison", model_params)
 server.port = 8521
