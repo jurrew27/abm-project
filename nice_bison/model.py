@@ -31,7 +31,7 @@ class NiceBison(Model):
                  initial_bison_food=4, bison_reproduce_threshold=10,
                  amount_grass_growth=4, number_grass_growth=5,
                  initial_bison_altruism=0.5, mutation_prob=0.5, mutation_std=0.1,
-                 verbose=False):
+                 one_grass_per_step=True, verbose=False):
         '''
         TODO: update this to bison
         Create a new Wolf-Sheep model with the given parameters.
@@ -58,6 +58,7 @@ class NiceBison(Model):
         self.mutation_prob = mutation_prob
         self.mutation_std = mutation_std
         self.altruism_bound = [0.05, 0.95]
+        self.one_grass_per_step = one_grass_per_step
         self.verbose = verbose
         
         self.schedule = RandomActivationByBreed(self)
@@ -66,7 +67,8 @@ class NiceBison(Model):
             {"Bison": lambda m: m.schedule.get_breed_count(Bison),
              "Grass": lambda m: m.schedule.get_breed_count(GrassPatch),
              "Altruism (avg)": lambda m: m.schedule.get_average_attribute(Bison, 'altruism'),
-             "Altruism (std)": lambda m: m.schedule.get_std_attribute(Bison, 'altruism')})
+             "Altruism (std)": lambda m: m.schedule.get_std_attribute(Bison, 'altruism'),
+             "Battles": "n_battles"})
 
         for i in range(self.initial_bison):
             x = self.random.randrange(self.width)
@@ -79,12 +81,16 @@ class NiceBison(Model):
 
         self.grow_grass()
 
+        self.n_battles = 0
+
         self.running = True
         self.datacollector.collect(self)
 
     def step(self):
         if self.verbose:
             print(f'------------- time {self.schedule.time}')
+
+        self.n_battles = 0
 
         self.schedule.step(by_breed=True)
         self.datacollector.collect(self)
@@ -96,6 +102,8 @@ class NiceBison(Model):
         gain_one, gain_two = self.payoff_matrix[bison_one_strategy][bison_two_strategy]
         bison_one.energy += gain_one * grass_amount
         bison_two.energy += gain_two * grass_amount
+
+        self.n_battles += 1
 
         if self.verbose:
             print(f'battle between bison {bison_one.unique_id} and {bison_two.unique_id}')
