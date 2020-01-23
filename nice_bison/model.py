@@ -1,6 +1,7 @@
 from mesa import Model
 from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
+from scipy.stats import truncnorm
 
 from nice_bison.agents import Bison, GrassPatch
 from nice_bison.schedule import RandomActivationByBreed
@@ -116,11 +117,13 @@ class NiceBison(Model):
             print(f'gains battle: {gain_one}, {gain_two}')
 
     def grow_grass(self):
-        for i in range(self.number_grass_growth):
-            x = round(self.random.gauss(self.width/2, self.clustering_std))
-            y = round(self.random.gauss(self.height/2, self.clustering_std))
-            x = min(max(x, 0), self.width-1)
-            y = min(max(y, 0), self.height-1)
+        a = (0 - self.width / 2) / self.clustering_std
+        b = (self.width - 1 - self.width / 2) / self.clustering_std
+        rvs = truncnorm.rvs(a, b, loc=self.width/2, scale=self.clustering_std, size=2 * self.number_grass_growth)
+
+        for i in range(0, len(rvs), 2):
+            x = int(round(rvs[i]))
+            y = int(round(rvs[i+1]))
 
             patch = GrassPatch(self.next_id(), (x, y), self, self.amount_grass_growth)
             self.grid.place_agent(patch, (x, y))
