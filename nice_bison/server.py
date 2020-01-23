@@ -50,7 +50,8 @@ model_params = {"number_grass_growth": UserSettableParameter('slider', 'Number g
                 "mutation_prob": UserSettableParameter('slider', 'Bison mutation probability', 0.5, 0.0, 1.0, step=0.05),
                 "mutation_std": UserSettableParameter('slider', 'Bison mutation standard deviation', 0.1, 0.0, 1.0, step=0.05),
                 "one_grass_per_step": UserSettableParameter('checkbox', 'Bison can eat only one grass per step', value=False),
-                "battle_cost": UserSettableParameter('slider', 'Cost of doing battle', 0.5, 0.0, 4.0, step=0.1)}
+                "battle_cost": UserSettableParameter('slider', 'Cost of doing battle', 0.5, 0.0, 4.0, step=0.1),
+                "clustering_std": UserSettableParameter('slider', 'Grass clustering std', 5, 0.0, 10.0, step=0.5)}
 
 server = ModularServer(NiceBison, [canvas_element, chart_element_agents, chart_element_altruism, chart_element_battles], "Bison", model_params)
 server.port = 8521

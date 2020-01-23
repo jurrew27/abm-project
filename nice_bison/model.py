@@ -30,7 +30,8 @@ class NiceBison(Model):
                  initial_bison_food=4, bison_reproduce_threshold=10,
                  amount_grass_growth=4, number_grass_growth=5,
                  initial_bison_altruism=0.5, mutation_prob=0.5, mutation_std=0.1,
-                 one_grass_per_step=True, battle_cost=0, verbose=False):
+                 one_grass_per_step=True, battle_cost=0, clustering_std=10,
+                 verbose=False):
         '''
         TODO: update this to bison
         Create a new Wolf-Sheep model with the given parameters.
@@ -59,6 +60,7 @@ class NiceBison(Model):
         self.altruism_bound = [0.05, 0.95]
         self.one_grass_per_step = one_grass_per_step
         self.battle_cost = battle_cost
+        self.clustering_std = clustering_std
         self.verbose = verbose
         
         self.schedule = RandomActivationByBreed(self)
@@ -115,11 +117,17 @@ class NiceBison(Model):
 
     def grow_grass(self):
         for i in range(self.number_grass_growth):
-            x = self.random.randrange(self.width)
-            y = self.random.randrange(self.height)
+            x = round(self.random.gauss(self.width/2, self.clustering_std))
+            y = round(self.random.gauss(self.height/2, self.clustering_std))
+            x = min(max(x, 0), self.width-1)
+            y = min(max(y, 0), self.height-1)
+
             patch = GrassPatch(self.next_id(), (x, y), self, self.amount_grass_growth)
             self.grid.place_agent(patch, (x, y))
             self.schedule.add(patch)
+
+            if self.verbose:
+                print(f'Place grass at ({x},{y})')
 
     def run_model(self, step_count=200):
 
