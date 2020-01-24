@@ -18,6 +18,9 @@ class Bison(RandomWalker):
         if self.model.verbose:
             print(f'bison {self.unique_id}: {self.energy} energy')
 
+        self.move()
+        self.energy -= 1
+
         neighborhood = self.model.grid.get_neighbors(self.pos, 1, True)
         patches = [obj for obj in neighborhood if isinstance(obj, GrassPatch)]
 
@@ -28,9 +31,6 @@ class Bison(RandomWalker):
         else:
             for patch in patches:
                 patch.claimants.append(self)
-
-        self.move()
-        self.energy -= 1
 
         if self.energy < 0:
             self.model.grid._remove_agent(self.pos, self)
@@ -55,7 +55,6 @@ class Bison(RandomWalker):
 
             if self.model.verbose:
                 print(f'bison {self.unique_id}: has child {child.unique_id} with energy {child.energy}')
-
 
     def move(self):
         fights_in_directions = self.get_fights_in_direction() # up, down, left, right
