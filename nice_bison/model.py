@@ -99,7 +99,6 @@ class NiceBison(Model):
         self.n_battles = 0
         self.old_battle_locations = self.current_battle_locations.copy()
         self.current_battle_locations = []
-        print(self.old_battle_locations)
 
         self.schedule.step(by_breed=True)
         self.datacollector.collect(self)
@@ -117,7 +116,6 @@ class NiceBison(Model):
 
         self.n_battles += 1
         self.current_battle_locations.append(grass.pos)
-        print('add to battle locations')
 
         if self.verbose:
             print(f'battle between bison {bison_one.unique_id} and {bison_two.unique_id}')
