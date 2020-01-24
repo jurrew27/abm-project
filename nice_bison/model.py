@@ -27,11 +27,9 @@ class NiceBison(Model):
 
     description = 'A model for simulating bison ecosystem modelling.'
 
-    def __init__(self, height=10, width=10, initial_bison=10,
-                 initial_bison_food=4, bison_reproduce_threshold=10,
-                 amount_grass_growth=4, number_grass_growth=5,
-                 initial_bison_altruism=0.5, mutation_prob=0.5, mutation_std=0.1,
-                 one_grass_per_step=True, battle_cost=0, clustering_std=10,
+    def __init__(self, height=10, width=10, initial_bison=10, initial_bison_food=4, bison_reproduce_threshold=10,
+                 amount_grass_growth=4, number_grass_growth=5, initial_bison_altruism_std=0.25, mutation_std=0.1,
+                 one_grass_per_step=True, battle_cost=0, clustering_std=10, avoid_fights_factor=10,
                  verbose=False):
         '''
         TODO: update this to bison
@@ -55,10 +53,10 @@ class NiceBison(Model):
         self.bison_reproduce_threshold = bison_reproduce_threshold
         self.number_grass_growth = number_grass_growth
         self.amount_grass_growth = amount_grass_growth
-        self.initial_bison_altruism = initial_bison_altruism 
-        self.mutation_prob = mutation_prob
+        self.initial_bison_altruism_std = initial_bison_altruism_std
+        self.avoid_fights_factor = avoid_fights_factor
         self.mutation_std = mutation_std
-        self.altruism_bound = [0.05, 0.95]
+        self.altruism_bound = [0.0, 1.0]
         self.one_grass_per_step = one_grass_per_step
         self.battle_cost = battle_cost
         self.clustering_std = clustering_std
@@ -73,11 +71,14 @@ class NiceBison(Model):
              "Altruism (std)": lambda m: m.schedule.get_std_attribute(Bison, 'altruism'),
              "Battles": "n_battles"})
 
-        for i in range(self.initial_bison):
+        a = (0 - 0.5) / self.initial_bison_altruism_std
+        b = (1 - 0.5) / self.initial_bison_altruism_std
+        rvs = truncnorm.rvs(a, b, loc=0.5, scale=self.initial_bison_altruism_std, size=self.initial_bison)
+        for rv in rvs:
             x = self.random.randrange(self.width)
             y = self.random.randrange(self.height)
             energy = self.initial_bison_food
-            altruism = self.initial_bison_altruism
+            altruism = rv
             bison = Bison(self.next_id(), (x, y), self, True, energy, altruism)
             self.grid.place_agent(bison, (x, y))
             self.schedule.add(bison)
@@ -85,6 +86,8 @@ class NiceBison(Model):
         self.grow_grass()
 
         self.n_battles = 0
+        self.current_battle_locations = []
+        self.old_battle_locations = []
 
         self.running = True
         self.datacollector.collect(self)
@@ -94,22 +97,27 @@ class NiceBison(Model):
             print(f'------------- time {self.schedule.time}')
 
         self.n_battles = 0
+        self.old_battle_locations = self.current_battle_locations.copy()
+        self.current_battle_locations = []
+        print(self.old_battle_locations)
 
         self.schedule.step(by_breed=True)
         self.datacollector.collect(self)
         self.grow_grass()
 
-    def bison_battle(self, grass_amount, bison_one, bison_two):
+    def bison_battle(self, grass, bison_one, bison_two):
         payoff_matrix = [[[0.5-self.battle_cost, 0.5-self.battle_cost], [1, 0]],
                          [[0, 1], [0.5, 0.5]]]
 
         bison_one_strategy = bison_one.choose_strategy()
         bison_two_strategy = bison_two.choose_strategy()
         gain_one, gain_two = payoff_matrix[bison_one_strategy][bison_two_strategy]
-        bison_one.energy += gain_one * grass_amount
-        bison_two.energy += gain_two * grass_amount
+        bison_one.energy += gain_one * grass.amount
+        bison_two.energy += gain_two * grass.amount
 
         self.n_battles += 1
+        self.current_battle_locations.append(grass.pos)
+        print('add to battle locations')
 
         if self.verbose:
             print(f'battle between bison {bison_one.unique_id} and {bison_two.unique_id}')

@@ -11,14 +11,13 @@ def bison_portrayal(agent):
         return
 
     portrayal = {}
-    bison_colors = ['#000000', '#110000', '#220000', '#330000', '#440000', '#550000', '#660000', '#770000', '#880000',
-                    '#990000', '#AA0000', '#BB0000', '#CC0000', '#DD0000', '#EE0000', '#FF0000']
+    bison_colors = ['#ff1100', '#ff4133', '#ff6c61', '#ff9e96', '#ffccc7', '#b5b5b5', '#d1ddff', '#a6d1ff', '#70b5ff', '#429dff', '#007bff']
 
     if type(agent) is Bison:
         # portrayal["Shape"] = "nice_bison/resources/bison.jpg"
         # portrayal["scale"] = 0.9
         # portrayal["Layer"] = 1
-        portrayal["Color"] = bison_colors[min(round(agent.energy), 15)]
+        portrayal["Color"] = bison_colors[int(round(agent.altruism * 10))]
         portrayal["Shape"] = "circle"
         portrayal["Filled"] = "true"
         portrayal["Layer"] = round(agent.energy)
@@ -46,12 +45,13 @@ model_params = {"number_grass_growth": UserSettableParameter('slider', 'Number g
                 "amount_grass_growth": UserSettableParameter('slider', 'Amount grass per patch', 4, 1, 20),
                 "initial_bison": UserSettableParameter('slider', 'Initial bison population', 10, 1, 100),
                 "initial_bison_food": UserSettableParameter('slider', 'Initial bison food', 4, 1, 10),
+                "initial_bison_altruism_std": UserSettableParameter('slider', 'Initial bison altruism std', 0.25, 0.0, 1.0, step=0.05),
                 "bison_reproduce_threshold": UserSettableParameter('slider', 'Bison reproduction energy threshold', 10, 1, 20),
-                "mutation_prob": UserSettableParameter('slider', 'Bison mutation probability', 0.5, 0.0, 1.0, step=0.05),
                 "mutation_std": UserSettableParameter('slider', 'Bison mutation standard deviation', 0.1, 0.0, 1.0, step=0.05),
                 "one_grass_per_step": UserSettableParameter('checkbox', 'Bison can eat only one grass per step', value=False),
+                "avoid_fights_factor": UserSettableParameter('slider', 'Avoid fights effect', 10, 0.0, 10.0, step=0.1),
                 "battle_cost": UserSettableParameter('slider', 'Cost of doing battle', 0.5, 0.0, 4.0, step=0.1),
-                "clustering_std": UserSettableParameter('slider', 'Grass clustering std', 5, 0.0, 10.0, step=0.5)}
+                "clustering_std": UserSettableParameter('slider', 'Grass clustering std', 5, 0.0, 10.0, step=0.1)}
 
 server = ModularServer(NiceBison, [canvas_element, chart_element_agents, chart_element_altruism, chart_element_battles], "Bison", model_params)
 server.port = 8521
