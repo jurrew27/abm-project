@@ -59,7 +59,7 @@ class Bison(RandomWalker):
         chance_fights = [direction / sum(n_fights) for direction in n_fights]
         adjusted_chance_fights = chance_fights.copy()
         for i in range(4):
-            adjusted_chance_fights[i] = chance_fights[i] * self.altruism + chance_fights[(i + 2) % 4] * (1 - self.altruism)
+            adjusted_chance_fights[i] = chance_fights[i] * (1- self.altruism) + chance_fights[(i + 2) % 4] * self.altruism
 
         n_grass = self.get_grass_in_direction() # up, down, left, right
         chance_grass = [direction / sum(n_grass) for direction in n_grass]
