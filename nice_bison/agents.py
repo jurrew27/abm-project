@@ -55,15 +55,17 @@ class Bison(RandomWalker):
                 print(f'bison {self.unique_id}: has child {child.unique_id} with energy {child.energy}')
 
     def move(self):
-        fights_in_direction = self.get_fights_in_direction() # up, down, left, right
-        wants_fights_factor = (self.altruism - 0.5) * -self.model.avoid_fights_factor * 2
-        adjusted_fights_in_direction = [direction**wants_fights_factor for direction in fights_in_direction]
+        n_fights = self.get_fights_in_direction() # up, down, left, right
+        chance_fights = [direction / sum(n_fights) for direction in n_fights]
+        adjusted_chance_fights = chance_fights.copy()
+        for i in range(4):
+            adjusted_chance_fights[i] = chance_fights[i] * self.altruism + chance_fights[(i + 2) % 4] * (1 - self.altruism)
 
-        grass_in_direction = self.get_grass_in_direction()
-        adjusted_grass_in_direction = [direction**self.model.wants_grass_factor for direction in grass_in_direction]
+        n_grass = self.get_grass_in_direction() # up, down, left, right
+        chance_grass = [direction / sum(n_grass) for direction in n_grass]
 
-        chance_in_direction = [fights + patches for fights, patches in zip(adjusted_fights_in_direction, adjusted_grass_in_direction)]
-        chance_in_direction = [direction/sum(chance_in_direction) for direction in chance_in_direction]
+        chance_in_direction = [((fights * self.model.movement_weight_fights) + patches * (1 - self.model.movement_weight_fights)) \
+                               for fights, patches in zip(adjusted_chance_fights, chance_grass)]
 
         rv = self.random.random()
         x, y = self.pos

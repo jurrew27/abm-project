@@ -29,8 +29,7 @@ class NiceBison(Model):
 
     def __init__(self, height=10, width=10, initial_bison=10, initial_bison_food=4, bison_reproduce_threshold=10,
                  amount_grass_growth=4, number_grass_growth=5, initial_bison_altruism_std=0.25, mutation_std=0.1,
-                 one_grass_per_step=True, battle_cost=0, clustering_std=10, avoid_fights_factor=10,
-                 wants_grass_factor=10, verbose=False):
+                 one_grass_per_step=True, battle_cost=0, clustering_std=10, movement_weight_fights=0.5, verbose=False):
         '''
         TODO: update this to bison
         Create a new Wolf-Sheep model with the given parameters.
@@ -54,8 +53,7 @@ class NiceBison(Model):
         self.number_grass_growth = number_grass_growth
         self.amount_grass_growth = amount_grass_growth
         self.initial_bison_altruism_std = initial_bison_altruism_std
-        self.avoid_fights_factor = avoid_fights_factor
-        self.wants_grass_factor = wants_grass_factor
+        self.movement_weight_fights = movement_weight_fights
         self.mutation_std = mutation_std
         self.altruism_bound = [0.0, 1.0]
         self.one_grass_per_step = one_grass_per_step
