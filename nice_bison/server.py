@@ -49,7 +49,8 @@ model_params = {"number_grass_growth": UserSettableParameter('slider', 'Number g
                 "bison_reproduce_threshold": UserSettableParameter('slider', 'Bison reproduction energy threshold', 10, 1, 20),
                 "mutation_std": UserSettableParameter('slider', 'Bison mutation standard deviation', 0.1, 0.0, 1.0, step=0.05),
                 "one_grass_per_step": UserSettableParameter('checkbox', 'Bison can eat only one grass per step', value=False),
-                "avoid_fights_factor": UserSettableParameter('slider', 'Avoid fights effect', 10, 0.0, 10.0, step=0.1),
+                "avoid_fights_factor": UserSettableParameter('slider', 'Avoid fights effect', 5, 0.0, 10.0, step=0.1),
+                "wants_grass_factor": UserSettableParameter('slider', 'Wants grass effect', 5, 0.0, 10.0, step=0.1),
                 "battle_cost": UserSettableParameter('slider', 'Cost of doing battle', 0.5, 0.0, 4.0, step=0.1),
                 "clustering_std": UserSettableParameter('slider', 'Grass clustering std', 5, 0.0, 10.0, step=0.1)}
 

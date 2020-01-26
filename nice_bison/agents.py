@@ -55,18 +55,23 @@ class Bison(RandomWalker):
                 print(f'bison {self.unique_id}: has child {child.unique_id} with energy {child.energy}')
 
     def move(self):
-        fights_in_directions = self.get_fights_in_direction() # up, down, left, right
-        wants_fights_factor = (self.altruism - 0.5) * -self.model.avoid_fights_factor
-        adjusted_fights_in_directions = [direction**wants_fights_factor for direction in fights_in_directions]
-        chance_in_directions = [direction/sum(adjusted_fights_in_directions) for direction in adjusted_fights_in_directions]
+        fights_in_direction = self.get_fights_in_direction() # up, down, left, right
+        wants_fights_factor = (self.altruism - 0.5) * -self.model.avoid_fights_factor * 2
+        adjusted_fights_in_direction = [direction**wants_fights_factor for direction in fights_in_direction]
+
+        grass_in_direction = self.get_grass_in_direction()
+        adjusted_grass_in_direction = [direction**self.model.wants_grass_factor for direction in grass_in_direction]
+
+        chance_in_direction = [fights + patches for fights, patches in zip(adjusted_fights_in_direction, adjusted_grass_in_direction)]
+        chance_in_direction = [direction/sum(chance_in_direction) for direction in chance_in_direction]
 
         rv = self.random.random()
         x, y = self.pos
-        if rv < chance_in_directions[0]:
+        if rv < chance_in_direction[0]:
             y += 1
-        elif rv < chance_in_directions[0] + chance_in_directions[1]:
+        elif rv < chance_in_direction[0] + chance_in_direction[1]:
             y -= 1
-        elif rv < chance_in_directions[0] + chance_in_directions[1] + chance_in_directions[2]:
+        elif rv < chance_in_direction[0] + chance_in_direction[1] + chance_in_direction[2]:
             x -= 1
         else:
             x += 1
@@ -82,15 +87,35 @@ class Bison(RandomWalker):
         up, down, left, right = 0.01, 0.01, 0.01, 0.01
         for x in xs:
             if x < self.pos[0]:
+                left += 1
+            else:
+                right += 1
+
+        for y in ys:
+            if y < self.pos[1]:
                 down += 1
             else:
                 up += 1
 
-        for y in ys:
-            if y < self.pos[1]:
+        return [up, down, left, right]
+
+    def get_grass_in_direction(self):
+        patches = self.model.schedule.agents_by_breed[GrassPatch].values()
+        xs = [patch.pos[0] for patch in patches]
+        ys = [patch.pos[1] for patch in patches]
+
+        up, down, left, right = 0.01, 0.01, 0.01, 0.01
+        for x in xs:
+            if x < self.pos[0]:
                 left += 1
             else:
                 right += 1
+
+        for y in ys:
+            if y < self.pos[1]:
+                down += 1
+            else:
+                up += 1
 
         return [up, down, left, right]
 
