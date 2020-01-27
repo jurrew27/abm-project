@@ -88,13 +88,17 @@ class Bison(RandomWalker):
 
         up, down, left, right = 0.01, 0.01, 0.01, 0.01
         for x in xs:
-            if x < self.pos[0]:
+            if abs(x - self.pos[0]) > self.model.sight:
+                continue
+            elif x < self.pos[0]:
                 left += 1
             else:
                 right += 1
 
         for y in ys:
-            if y < self.pos[1]:
+            if abs(y - self.pos[1]) > self.model.sight:
+                continue
+            elif y < self.pos[1]:
                 down += 1
             else:
                 up += 1
@@ -108,13 +112,17 @@ class Bison(RandomWalker):
 
         up, down, left, right = 0.01, 0.01, 0.01, 0.01
         for x in xs:
-            if x < self.pos[0]:
+            if abs(x - self.pos[0]) > self.model.sight:
+                continue
+            elif x < self.pos[0]:
                 left += 1
             else:
                 right += 1
 
         for y in ys:
-            if y < self.pos[1]:
+            if abs(y - self.pos[1]) > self.model.sight:
+                continue
+            elif y < self.pos[1]:
                 down += 1
             else:
                 up += 1

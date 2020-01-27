@@ -50,6 +50,7 @@ model_params = {"number_grass_growth": UserSettableParameter('slider', 'Number g
                 "mutation_std": UserSettableParameter('slider', 'Bison mutation standard deviation', 0.1, 0.0, 1.0, step=0.05),
                 "one_grass_per_step": UserSettableParameter('checkbox', 'Bison can eat only one grass per step', value=False),
                 "movement_weight_fights": UserSettableParameter('slider', 'Weight of fights in movement', 0.5, 0.0, 1.0, step=0.1),
+                "sight": UserSettableParameter('slider', 'How far can an agent see', 3, 0, 10),
                 "battle_cost": UserSettableParameter('slider', 'Cost of doing battle', 0.5, 0.0, 4.0, step=0.1),
                 "clustering_std": UserSettableParameter('slider', 'Grass clustering std', 5, 0.0, 10.0, step=0.1)}
 
