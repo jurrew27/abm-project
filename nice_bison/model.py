@@ -109,8 +109,8 @@ class NiceBison(Model):
         self.grow_grass()
 
     def bison_battle(self, grass, bison_one, bison_two):
-        # todo halve battle cost
-        payoff_matrix = [[[0.5-self.battle_cost, 0.5-self.battle_cost], [1, 0]],
+        cost = self.battle_cost / 2
+        payoff_matrix = [[[0.5-cost, 0.5-cost], [1, 0]],
                          [[0, 1], [0.5, 0.5]]]
 
         bison_one_strategy = bison_one.choose_strategy()
