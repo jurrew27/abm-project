@@ -30,7 +30,7 @@ class NiceBison(Model):
     def __init__(self, height=10, width=10, initial_bison=10, initial_bison_food=4, bison_reproduce_threshold=10,
                  amount_grass_growth=4, number_grass_growth=5, initial_bison_cooperation_std=0.25, mutation_std=0.1,
                  one_grass_per_step=True, battle_cost=0.5, grass_spread=10, movement_weight_fights=0.5,
-                 sight=4, verbose=False):
+                 sight=4, warmup_period=250, track_cooperation=True, verbose=False):
         '''
         TODO: update this to bison
         Create a new Wolf-Sheep model with the given parameters.
@@ -61,6 +61,8 @@ class NiceBison(Model):
         self.battle_cost = battle_cost
         self.grass_spread = grass_spread
         self.sight = sight
+        self.warmup_period = warmup_period
+        self.track_cooperation = track_cooperation
         self.verbose = verbose
         
         self.schedule = RandomActivationByBreed(self)
@@ -89,6 +91,7 @@ class NiceBison(Model):
         self.n_battles = 0
         self.current_battle_locations = []
         self.old_battle_locations = []
+        self.cooperation_values = []
 
         self.running = True
         self.datacollector.collect(self)

@@ -11,6 +11,9 @@ class Bison(RandomWalker):
         self.opinion_opponents = {}
         self.cooperation = cooperation
 
+        if self.model.track_cooperation and self.model.schedule.steps > self.model.warmup_period:
+            self.model.cooperation_values.append(self.cooperation)
+
     def choose_strategy(self):
         return 0 if self.random.random() > self.cooperation else 1
 

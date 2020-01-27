@@ -91,3 +91,15 @@ class RandomActivationByBreed(RandomActivation):
             return pstdev(attribute_values)
         else:
             return 0
+
+    def get_average_cooperation_of_run(self):
+        if len(self.model.cooperation_values) > 1:
+            return mean(self.model.cooperation_values)
+        else:
+            return -1
+
+    def get_std_cooperation_of_run(self):
+        if len(self.model.cooperation_values) > 1:
+            return pstdev(self.model.cooperation_values)
+        else:
+            return -1
