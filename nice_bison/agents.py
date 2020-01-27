@@ -21,7 +21,7 @@ class Bison(RandomWalker):
         self.move()
         self.energy -= 1
 
-        neighborhood = self.model.grid.get_neighbors(self.pos, 1, True)
+        neighborhood = self.model.grid.get_neighbors(self.pos, radius=1, moore=False)
         patches = [obj for obj in neighborhood if isinstance(obj, GrassPatch)]
 
         if self.model.one_grass_per_step:
