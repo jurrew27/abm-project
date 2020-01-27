@@ -5,14 +5,14 @@ from nice_bison.walker import RandomWalker
 class Bison(RandomWalker):
     energy = None
 
-    def __init__(self, unique_id, pos, model, moore, energy=None, altruism=None):
+    def __init__(self, unique_id, pos, model, moore, energy=None, cooperation=None):
         super().__init__(unique_id, pos, model, moore=moore)
         self.energy = energy
         self.opinion_opponents = {}
-        self.altruism = altruism
+        self.cooperation = cooperation
 
     def choose_strategy(self):
-        return 0 if self.random.random() > self.altruism else 1
+        return 0 if self.random.random() > self.cooperation else 1
 
     def step(self):
         if self.model.verbose:
@@ -43,11 +43,11 @@ class Bison(RandomWalker):
 
         if self.energy > self.model.bison_reproduce_threshold:
             self.energy /= 2
-            altruism_offspring = self.random.gauss(self.altruism, self.model.mutation_std)
-            if not (self.model.altruism_bound[0] < altruism_offspring < self.model.altruism_bound[1]):
-                altruism_offspring = self.altruism
+            cooperation_offspring = self.random.gauss(self.cooperation, self.model.mutation_std)
+            if not (self.model.cooperation_bound[0] < cooperation_offspring < self.model.cooperation_bound[1]):
+                cooperation_offspring = self.cooperation
             child = Bison(self.model.next_id(), self.pos, self.model,
-                          self.moore, self.energy, altruism_offspring)
+                          self.moore, self.energy, cooperation_offspring)
             self.model.grid.place_agent(child, self.pos)
             self.model.schedule.add(child)
 
@@ -59,12 +59,12 @@ class Bison(RandomWalker):
         chance_fights = [direction / sum(n_fights) for direction in n_fights]
         adjusted_chance_fights = chance_fights.copy()
         for i in range(4):
-            adjusted_chance_fights[i] = chance_fights[i] * (1- self.altruism) + chance_fights[(i + 2) % 4] * self.altruism
+            adjusted_chance_fights[i] = chance_fights[i] * (1- self.cooperation) + chance_fights[(i + 2) % 4] * self.cooperation
 
         n_grass = self.get_grass_in_direction() # up, down, left, right
         chance_grass = [direction / sum(n_grass) for direction in n_grass]
 
-        chance_in_direction = [((fights * self.model.movement_weight_fights) + patches * (1 - self.model.movement_weight_fights)) \
+        chance_in_direction = [fights * self.model.movement_weight_fights + patches * (1 - self.model.movement_weight_fights) \
                                for fights, patches in zip(adjusted_chance_fights, chance_grass)]
 
         rv = self.random.random()

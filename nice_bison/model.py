@@ -28,8 +28,8 @@ class NiceBison(Model):
     description = 'A model for simulating bison ecosystem modelling.'
 
     def __init__(self, height=10, width=10, initial_bison=10, initial_bison_food=4, bison_reproduce_threshold=10,
-                 amount_grass_growth=4, number_grass_growth=5, initial_bison_altruism_std=0.25, mutation_std=0.1,
-                 one_grass_per_step=True, battle_cost=0.5, clustering_std=10, movement_weight_fights=0.5,
+                 amount_grass_growth=4, number_grass_growth=5, initial_bison_cooperation_std=0.25, mutation_std=0.1,
+                 one_grass_per_step=True, battle_cost=0.5, grass_spread=10, movement_weight_fights=0.5,
                  sight=4, verbose=False):
         '''
         TODO: update this to bison
@@ -53,13 +53,13 @@ class NiceBison(Model):
         self.bison_reproduce_threshold = bison_reproduce_threshold
         self.number_grass_growth = number_grass_growth
         self.amount_grass_growth = amount_grass_growth
-        self.initial_bison_altruism_std = initial_bison_altruism_std
+        self.initial_bison_cooperation_std = initial_bison_cooperation_std
         self.movement_weight_fights = movement_weight_fights
         self.mutation_std = mutation_std
-        self.altruism_bound = [0.0, 1.0]
+        self.cooperation_bound = [0.0, 1.0]
         self.one_grass_per_step = one_grass_per_step
         self.battle_cost = battle_cost
-        self.clustering_std = clustering_std
+        self.grass_spread = grass_spread
         self.sight = sight
         self.verbose = verbose
         
@@ -68,19 +68,19 @@ class NiceBison(Model):
         self.datacollector = DataCollector(
             {"Bison": lambda m: m.schedule.get_breed_count(Bison),
              "Grass": lambda m: m.schedule.get_breed_count(GrassPatch),
-             "Altruism (avg)": lambda m: m.schedule.get_average_attribute(Bison, 'altruism'),
-             "Altruism (std)": lambda m: m.schedule.get_std_attribute(Bison, 'altruism'),
+             "cooperation (avg)": lambda m: m.schedule.get_average_attribute(Bison, 'cooperation'),
+             "cooperation (std)": lambda m: m.schedule.get_std_attribute(Bison, 'cooperation'),
              "Battles": "n_battles"})
 
-        a = (0 - 0.5) / self.initial_bison_altruism_std
-        b = (1 - 0.5) / self.initial_bison_altruism_std
-        rvs = truncnorm.rvs(a, b, loc=0.5, scale=self.initial_bison_altruism_std, size=self.initial_bison)
+        a = (0 - 0.5) / self.initial_bison_cooperation_std
+        b = (1 - 0.5) / self.initial_bison_cooperation_std
+        rvs = truncnorm.rvs(a, b, loc=0.5, scale=self.initial_bison_cooperation_std, size=self.initial_bison)
         for rv in rvs:
             x = self.random.randrange(self.width)
             y = self.random.randrange(self.height)
             energy = self.initial_bison_food
-            altruism = rv
-            bison = Bison(self.next_id(), (x, y), self, True, energy, altruism)
+            cooperation = rv
+            bison = Bison(self.next_id(), (x, y), self, True, energy, cooperation)
             self.grid.place_agent(bison, (x, y))
             self.schedule.add(bison)
 
@@ -106,6 +106,7 @@ class NiceBison(Model):
         self.grow_grass()
 
     def bison_battle(self, grass, bison_one, bison_two):
+        # todo halve battle cost
         payoff_matrix = [[[0.5-self.battle_cost, 0.5-self.battle_cost], [1, 0]],
                          [[0, 1], [0.5, 0.5]]]
 
@@ -120,13 +121,13 @@ class NiceBison(Model):
 
         if self.verbose:
             print(f'battle between bison {bison_one.unique_id} and {bison_two.unique_id}')
-            print(f'altruism factors: {bison_one.altruism}, {bison_two.altruism}')
+            print(f'cooperation factors: {bison_one.cooperation}, {bison_two.cooperation}')
             print(f'gains battle: {gain_one}, {gain_two}')
 
     def grow_grass(self):
-        a = (0 - self.width / 2) / self.clustering_std
-        b = (self.width - 1 - self.width / 2) / self.clustering_std
-        rvs = truncnorm.rvs(a, b, loc=self.width/2, scale=self.clustering_std, size=2 * self.number_grass_growth)
+        a = (0 - self.width / 2) / self.grass_spread
+        b = (self.width - 1 - self.width / 2) / self.grass_spread
+        rvs = truncnorm.rvs(a, b, loc=self.width/2, scale=self.grass_spread, size=2 * self.number_grass_growth)
 
         for i in range(0, len(rvs), 2):
             x = int(round(rvs[i]))
