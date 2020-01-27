@@ -27,10 +27,10 @@ class NiceBison(Model):
 
     description = 'A model for simulating bison ecosystem modelling.'
 
-    def __init__(self, height=10, width=10, initial_bison=10, initial_bison_food=4, bison_reproduce_threshold=10,
+    def __init__(self, height=15, width=15, initial_bison=20, initial_bison_food=4, bison_reproduce_threshold=10,
                  amount_grass_growth=4, number_grass_growth=5, initial_bison_cooperation_std=0.25, mutation_std=0.1,
-                 one_grass_per_step=True, battle_cost=0.5, grass_spread=10, movement_weight_fights=0.5,
-                 sight=4, warmup_period=250, track_cooperation=True, verbose=False):
+                 one_grass_per_step=True, battle_cost=1, grass_spread=2.5, movement_weight_fights=0.5,
+                 sight=4, warmup_period=100, track_cooperation=True, verbose=False):
         '''
         TODO: update this to bison
         Create a new Wolf-Sheep model with the given parameters.

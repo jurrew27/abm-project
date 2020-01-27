@@ -34,7 +34,7 @@ def bison_portrayal(agent):
     return portrayal
 
 
-canvas_element = CanvasGrid(bison_portrayal, 10, 10, 500, 500)
+canvas_element = CanvasGrid(bison_portrayal, 15, 15, 500, 500)
 chart_element_cooperation = ChartModule([{"Label": "Cooperation (avg)", "Color": "#000088"},
                              {"Label": "Cooperation (std)", "Color": "#333333"}])
 chart_element_agents = ChartModule([{"Label": "Grass", "Color": "#008800"},
